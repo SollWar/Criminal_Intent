@@ -3,6 +3,9 @@ package com.example.sollwar.criminalintent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 
+/**
+ * Класс стартовой activity
+ */
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

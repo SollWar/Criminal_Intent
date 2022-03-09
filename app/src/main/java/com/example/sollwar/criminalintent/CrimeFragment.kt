@@ -12,6 +12,9 @@ import android.widget.EditText
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 
+/**
+ * Класс фрагмента Crime
+ */
 class CrimeFragment: Fragment() {
 
     private lateinit var crime: Crime

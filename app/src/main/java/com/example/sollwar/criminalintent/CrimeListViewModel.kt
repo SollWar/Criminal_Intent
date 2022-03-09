@@ -2,6 +2,10 @@ package com.example.sollwar.criminalintent
 
 import androidx.lifecycle.ViewModel
 
+/**
+ * ViewModel фрагмента CrimeList
+ * Пока не хранит, а каждый раз генерирует 100 объектов Crime
+ */
 class CrimeListViewModel: ViewModel() {
     val crimes = mutableListOf<Crime>() // Список crime
     init {
