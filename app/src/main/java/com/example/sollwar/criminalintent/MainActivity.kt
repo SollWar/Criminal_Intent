@@ -10,7 +10,7 @@ class MainActivity : AppCompatActivity() {
 
         val currentFragment = supportFragmentManager.findFragmentById(R.id.fragment_container) // Возвращает фрагмент если он уже в списке
         if (currentFragment == null) { // Если нет фрагмента, создаёт новый
-            val fragment = CrimeFragment()
+            val fragment = CrimeListFragment.newInstance()
             supportFragmentManager   // Транзакция фрагмента
                 .beginTransaction()
                 .add(R.id.fragment_container, fragment)
