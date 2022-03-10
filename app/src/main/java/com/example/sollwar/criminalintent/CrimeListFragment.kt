@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -24,16 +25,11 @@ private const val TAG = "CrimeListFragment"
 class CrimeListFragment: Fragment() {
 
     private lateinit var crimeRecyclerView: RecyclerView // Обьявление RecyclerView
-    private var adapter: CrimeAdapter? = null // Адаптер для RecyclerView
+    private var adapter: CrimeAdapter? = CrimeAdapter(emptyList()) // Адаптер для RecyclerView, при запуске пустой, пока LiveData без результатов
 
 
     private val crimeListViewModel: CrimeListViewModel by lazy { // Объявленеи ViewModel
         ViewModelProviders.of(this).get(CrimeListViewModel::class.java)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        Log.d(TAG, "Total crimes: ${crimeListViewModel.crimes.size}")
     }
 
     override fun onCreateView(
@@ -44,15 +40,28 @@ class CrimeListFragment: Fragment() {
         val view = inflater.inflate(R.layout.fragment_crime_list, container, false) // Указывает layout
         crimeRecyclerView = view.findViewById(R.id.crime_recycler_view) as RecyclerView
         crimeRecyclerView.layoutManager = LinearLayoutManager(context) // Нужен для работы RecyclerView
-        updateUI()
+        crimeRecyclerView.adapter = adapter // Указываем адаптер
         return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) { // Вызывается после onCreateView, когда всё на своих местах
+        super.onViewCreated(view, savedInstanceState)
+        crimeListViewModel.crimeListLiveData.observe( // Регистриция наблюдателя за экземпляром LiveData и его связи с жизненным циклом другого компонента
+                                            // Observer - отвечает за реакцию на новые данные из LiveData
+            viewLifecycleOwner,     // Время жизни наблюдатели длится столько-же как и время фрагмента(в данном случае)
+            Observer { crimes ->
+                crimes?.let {
+                    Log.i(TAG, "Got crimes ${crimes.size}")
+                    updateUI(crimes)
+                }
+            }
+        )
     }
 
     /**
      * "Запускает" RecyclerView
      */
-    private fun updateUI() {
-        val crimes = crimeListViewModel.crimes
+    private fun updateUI(crimes: List<Crime>) {
         adapter = CrimeAdapter(crimes) // Передаёт в adapter массив
         crimeRecyclerView.adapter = adapter
     }
