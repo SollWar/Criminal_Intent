@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.Room
 import com.example.sollwar.criminalintent.database.CrimeDatabase
 import java.util.*
+import java.util.concurrent.Executors
 
 private const val DATABASE_NAME = "crime-database"
 
@@ -21,8 +22,21 @@ class CrimeRepository private constructor(context: Context){
     ).build()
 
     private val crimeDao = database.crimeDao() // Инициализация DAO и его функций
+    private val executor = Executors.newSingleThreadExecutor() // Исполнитель - обыект который ссылается на поток
     fun getCrimes(): LiveData<List<Crime>> = crimeDao.getCrimes()
     fun getCrime(id: UUID): LiveData<Crime?> = crimeDao.getCrime(id)
+    fun updateCrime(crime: Crime) {
+        executor.execute { // Код,
+            // который находится в этом блоке, будет выполняться в любом
+            // потоке, на который ссылается исполнитель.
+            crimeDao.updateCrime(crime)
+        }
+    }
+    fun addCrime(crime: Crime) {
+        executor.execute {
+            crimeDao.addCrime(crime)
+        }
+    }
 
     companion object {
         private var INSTANCE: CrimeRepository? = null
