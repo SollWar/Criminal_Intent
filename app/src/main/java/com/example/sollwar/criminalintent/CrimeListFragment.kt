@@ -1,5 +1,6 @@
 package com.example.sollwar.criminalintent
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -15,6 +16,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import java.text.DateFormat
 import java.time.format.DateTimeFormatter
+import java.util.*
+import javax.security.auth.callback.Callback
 
 private const val TAG = "CrimeListFragment"
 
@@ -23,6 +26,13 @@ private const val TAG = "CrimeListFragment"
  * Работает с RecyclerView
  */
 class CrimeListFragment: Fragment() {
+    // Интерфейс обратного вызова
+    // Для передачи вызовов из CrimeListFragment в MainActivity
+    interface Callbacks {
+        fun onCrimeSelected(crimeId: UUID)
+    }
+
+    private var callbacks: Callbacks? = null
 
     private lateinit var crimeRecyclerView: RecyclerView // Обьявление RecyclerView
     private var adapter: CrimeAdapter? = CrimeAdapter(emptyList()) // Адаптер для RecyclerView, при запуске пустой, пока LiveData без результатов
@@ -32,7 +42,17 @@ class CrimeListFragment: Fragment() {
         ViewModelProviders.of(this).get(CrimeListViewModel::class.java)
     }
 
-    override fun onCreateView(
+    override fun onAttach(context: Context) { // Вызывается когда фрагмент прикрепляется к activity
+        super.onAttach(context)
+        callbacks = context as Callbacks? // Помещаем context из функции, т.е. это экземпляр activity в котором этот фрагмет
+    }
+
+    override fun onDetach() { // Обратно onAttach
+        super.onDetach()
+        callbacks = null
+    }
+
+    override fun onCreateView( // Вызывается при отрисовке
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -82,8 +102,8 @@ class CrimeListFragment: Fragment() {
             itemView.setOnClickListener(this)
         }
 
-        override fun onClick(v: View?) {
-            Toast.makeText(context, "${crime.title} pressed", Toast.LENGTH_SHORT).show()
+        override fun onClick(v: View?) { // Срабатывает при клике на RecyclerView
+            callbacks?.onCrimeSelected(crime.id)
         }
 
         fun bind(crime: Crime) {
