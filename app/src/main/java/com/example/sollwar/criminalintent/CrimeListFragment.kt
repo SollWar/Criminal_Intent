@@ -3,9 +3,7 @@ package com.example.sollwar.criminalintent
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -39,6 +37,27 @@ class CrimeListFragment: Fragment() {
 
     private val crimeListViewModel: CrimeListViewModel by lazy { // Объявленеи ViewModel
         ViewModelProviders.of(this).get(CrimeListViewModel::class.java)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true) // Фрагмент должен получать обратные вызовы меню
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) { // Добавляет меню
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.fragment_crime_list, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean { // Реакция на нажатие кнопки
+        return when (item.itemId) {
+            R.id.new_crime -> {
+                val crime = Crime() // Новый экземпляр Crime
+                crimeListViewModel.addCrime(crime) // Добавляем Crime в БД
+                callbacks?.onCrimeSelected(crime.id) // Вызываем fragment
+                true
+            } else -> return super.onOptionsItemSelected(item)
+        }
     }
 
     override fun onAttach(context: Context) { // Вызывается когда фрагмент прикрепляется к activity
