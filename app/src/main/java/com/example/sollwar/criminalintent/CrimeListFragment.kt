@@ -26,9 +26,8 @@ private const val TAG = "CrimeListFragment"
  * Работает с RecyclerView
  */
 class CrimeListFragment: Fragment() {
-    // Интерфейс обратного вызова
-    // Для передачи вызовов из CrimeListFragment в MainActivity
-    interface Callbacks {
+
+    interface Callbacks { // Интерфейс обратного вызова. Для передачи вызовов из CrimeListFragment в MainActivity
         fun onCrimeSelected(crimeId: UUID)
     }
 

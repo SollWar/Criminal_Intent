@@ -18,11 +18,13 @@ import androidx.lifecycle.Observer
 import java.util.*
 
 private const val ARG_CRIME_ID = "crime_id"
+private const val DIALOG_DATE = "DialogDate"
+private const val REQUEST_DATE = 0
 
 /**
  * Класс фрагмента Crime
  */
-class CrimeFragment: Fragment() {
+class CrimeFragment: Fragment(), DatePickerFragment.Callbacks {
 
     private val crimeDetailViewModel: CrimeDetailViewModel by lazy {
         ViewModelProviders.of(this).get(CrimeDetailViewModel::class.java)
@@ -50,10 +52,11 @@ class CrimeFragment: Fragment() {
         dateButton = view.findViewById(R.id.crime_date) as Button
         solvedCheckBox = view.findViewById(R.id.crime_solved) as CheckBox
 
-        dateButton.apply {
+        // Блокировка кнопки
+        /*dateButton.apply {
             text = crime.date.toString()
             isEnabled = false
-        }
+        }*/
 
         return view
     }
@@ -90,7 +93,12 @@ class CrimeFragment: Fragment() {
         }
     }
 
-    override fun onStart() {
+    override fun onDateSelected(date: Date) { // Обратный вызов из DatePickerFragment
+        crime.date = date
+        updateUI()
+    }
+
+    override fun onStart() { // Тут обьявляются слушатели
         super.onStart()
         val titleWatcher = object: TextWatcher { // Слушатель TextWatcher
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -110,6 +118,13 @@ class CrimeFragment: Fragment() {
         solvedCheckBox.apply {
             setOnCheckedChangeListener { _, isChecked ->
                 crime.isSolved = isChecked
+            }
+        }
+
+        dateButton.setOnClickListener { // Вызов DialogAlert при нажатии на кнопку
+            DatePickerFragment.newInstance(crime.date).apply  {
+                setTargetFragment(this@CrimeFragment, REQUEST_DATE) // Назначение целевого элемента
+                show(this@CrimeFragment.parentFragmentManager, DIALOG_DATE)
             }
         }
     }
