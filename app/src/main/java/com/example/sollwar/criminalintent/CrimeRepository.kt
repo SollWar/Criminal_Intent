@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.room.Room
 import com.example.sollwar.criminalintent.database.CrimeDatabase
+import com.example.sollwar.criminalintent.database.migration_1_2
 import java.util.*
 import java.util.concurrent.Executors
 
@@ -19,7 +20,8 @@ class CrimeRepository private constructor(context: Context){
         context.applicationContext, // Передаём контекст приложения
         CrimeDatabase::class.java, // Класс БД которую необходимо создать
         DATABASE_NAME // Имя файла БД
-    ).build()
+    ).addMigrations(migration_1_2) // Миграция БД
+        .build()
 
     private val crimeDao = database.crimeDao() // Инициализация DAO и его функций
     private val executor = Executors.newSingleThreadExecutor() // Исполнитель - обыект который ссылается на поток

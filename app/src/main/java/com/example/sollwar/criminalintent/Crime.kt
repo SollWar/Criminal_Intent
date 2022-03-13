@@ -13,6 +13,7 @@ import java.util.*
 data class Crime(@PrimaryKey val id: UUID = UUID.randomUUID(),  // Генерация уникального идентификатора, он PrimaryKey в таблице
                  var title: String = "",
                  var date: Date = Date(), // По-умолчанию текущая дата
-                 var isSolved: Boolean = false) {
+                 var isSolved: Boolean = false,
+                 var suspect: String = "") {
 
 }

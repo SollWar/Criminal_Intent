@@ -6,18 +6,16 @@ import android.util.Log
 import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import java.text.DateFormat
-import java.time.format.DateTimeFormatter
+import android.text.format.DateFormat
 import java.util.*
-import javax.security.auth.callback.Callback
 
 private const val TAG = "CrimeListFragment"
+private const val DATE_FORMAT = "EEE, dd, MMM"
 
 /**
  * Класс фрагмента CrimeList
@@ -127,7 +125,7 @@ class CrimeListFragment: Fragment() {
         fun bind(crime: Crime) {
             this.crime = crime
             titleTextView.text = this.crime.title
-            dateTextView.text = this.crime.date.toString()
+            dateTextView.text = DateFormat.format(DATE_FORMAT, crime.date).toString()
             solvedImageView.visibility = if (crime.isSolved) { // В зависимости от переменной скрывать ImageView
                 View.VISIBLE
             } else {
